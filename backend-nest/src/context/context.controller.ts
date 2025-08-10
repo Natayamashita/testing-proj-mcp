@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { ContextService } from './context.service';
 import { CreateContextDto } from './dto/create-context.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,13 +9,12 @@ export class ContextController {
   constructor(private readonly contextService: ContextService) {}
 
   @Post()
-  prompt(@Body() createContextDto: CreateContextDto) {
-    return this.contextService.sendPrompt(createContextDto);
-  }
+  async prompt(@Body() createContextDto: CreateContextDto) {
+    const promptRes = await this.contextService.sendPrompt(createContextDto);
+    //valida se o prompt instruiu a base corretamente ou nao
+    if(promptRes == 'not found') throw new NotFoundException('no instructions clear or no function called');
 
-  @Get()
-  findAll() {
-    return this.contextService.findAll();
+    return promptRes;
   }
 
   @Get(':id')

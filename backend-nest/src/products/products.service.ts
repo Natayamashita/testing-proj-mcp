@@ -5,8 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(name: string, userId: number) {
-    return this.prisma.product.create({ data: { name, userId } });
+  async create(productBody: {name: string, userId: number, price: number}) {
+    return this.prisma.product.create({ data: productBody });
   }
 
   findAll() {
